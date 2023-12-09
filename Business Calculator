@@ -1,0 +1,73 @@
+import tkinter as tk
+import time
+import math
+
+expression = ""
+
+def button_click(button_text):
+    global expression
+    if button_text == '=':
+        try:
+            result = eval(expression)
+            expression = str(result)
+        except Exception as e:
+            expression = 'Error'
+    elif button_text == 'Clear All':
+        expression = ''
+    elif button_text == 'Squire':
+        expression = str(float(expression) ** 2)
+    elif button_text == 'Squire Root':
+        expression = str(math.sqrt(float(expression)))
+    elif button_text == 'Percentage':
+        expression = str(float(expression) / 100)
+    else:
+        expression += str(button_text)
+    
+    animate_button_click(button_text)
+    update_display()
+
+def animate_button_click(button_text):
+    button_widget = [widget for widget in root.winfo_children() if isinstance(widget, tk.Button) and widget.cget("text") == button_text][0]
+    button_widget.configure(bg='#90EE90')  # Light green
+    root.update()
+    time.sleep(0.1)
+    button_widget.configure(bg=button_widget.master.cget('bg'))
+
+def update_display():
+    entry.delete(0, tk.END)
+    entry.insert(0, expression)
+
+
+root = tk.Tk()
+root.title("Digital Calculator")
+
+entry = tk.Entry(root, font=('Helvetica', 24), justify='right', bd=10)
+entry.grid(row=0, column=0, columnspan=4, padx=10, pady=10)
+
+buttons = [
+    '7', '8', '9', '/',
+    '4', '5', '6', '*',
+    '1', '2', '3', '-',
+    '0', '.', '=', '+',
+    'Squire', 'Squire Root', 'Percentage', 'Clear All'
+]
+
+row_val = 1
+col_val = 0
+
+for button in buttons:
+    btn = tk.Button(root, text=button, font=('Helvetica', 14), command=lambda b=button: button_click(b))
+    btn.grid(row=row_val, column=col_val, sticky='nsew', padx=5, pady=5)
+    col_val += 1
+    if col_val > 3:
+        col_val = 0
+        row_val += 1
+
+for i in range(4):
+    root.grid_columnconfigure(i, minsize=80)
+
+for i in range(1, 5):
+    root.grid_columnconfigure(i, weight=1)
+    root.grid_rowconfigure(i, weight=1)
+
+root.mainloop()
